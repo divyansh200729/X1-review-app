@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>X1 SmarTech — Leave a Review</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(145deg, #fdf0fb 0%, #eff3ff 50%, #f0edff 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 36px 16px 60px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Soft colour blobs in background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -60px;
+      left: -60px;
+      width: 340px;
+      height: 340px;
+      background: radial-gradient(circle, rgba(253,101,196,0.18) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -60px;
+      right: -60px;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(63,114,229,0.14) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 28px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #fd65c4, #836cd3, #3f72e5);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      font-size: 28px;
+      box-shadow: 0 8px 24px rgba(131,108,211,0.3), 0 2px 8px rgba(253,101,196,0.2);
+    }
+
+    .logo-title {
+      font-size: 26px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #fd65c4 0%, #836cd3 50%, #3f72e5 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.8px;
+    }
+
+    .logo-sub {
+      font-size: 12px;
+      color: #9a9ab0;
+      margin-top: 4px;
+      letter-spacing: 0.3px;
+    }
+
+    /* Main card */
+    .card {
+      background: #ffffff;
+      border: 1.5px solid rgba(131,108,211,0.12);
+      border-radius: 28px;
+      padding: 28px 22px 24px;
+      max-width: 460px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+      box-shadow:
+        0 4px 6px rgba(131,108,211,0.06),
+        0 20px 48px rgba(131,108,211,0.12),
+        0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    /* Top tag */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: linear-gradient(135deg, rgba(253,101,196,0.12), rgba(131,108,211,0.1));
+      border: 1px solid rgba(253,101,196,0.25);
+      color: #d44fa8;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+
+    .headline {
+      font-size: 21px;
+      font-weight: 800;
+      color: #2a2a3d;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+      line-height: 1.3;
+    }
+
+    .sub {
+      font-size: 13px;
+      color: #9a9ab0;
+      margin-bottom: 20px;
+      line-height: 1.55;
+    }
+
+    /* Stars row */
+    .stars-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .stars {
+      font-size: 22px;
+      letter-spacing: 1px;
+    }
+
+    .stars-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #e07d00;
+      background: rgba(245,166,35,0.12);
+      border: 1px solid rgba(245,166,35,0.3);
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    /* Divider */
+    .divider {
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent, rgba(131,108,211,0.15), transparent);
+      margin-bottom: 18px;
+    }
+
+    /* Review box */
+    .review-box {
+      background: linear-gradient(145deg, #fdf5fc, #f4f0ff);
+      border: 1.5px solid rgba(131,108,211,0.15);
+      border-radius: 18px;
+      padding: 20px;
+      position: relative;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      min-height: 110px;
+    }
+
+    .review-box.copied {
+      border-color: rgba(131,108,211,0.45);
+      box-shadow: 0 0 0 4px rgba(131,108,211,0.08);
+    }
+
+    .quote-mark {
+      font-size: 52px;
+      line-height: 1;
+      color: rgba(131,108,211,0.12);
+      font-family: Georgia, serif;
+      position: absolute;
+      top: 8px;
+      left: 14px;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .review-text {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #3a3a55;
+      padding-top: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Shuffle hint */
+    .shuffle-hint {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 5px;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+
+    .shuffle-hint span {
+      font-size: 11px;
+      color: #c0b8d8;
+    }
+
+    /* Actions */
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 16px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn:active { transform: scale(0.96); }
+
+    .btn-google {
+      flex: 1;
+      padding: 16px 20px;
+      font-size: 15px;
+      color: #fff;
+      background: linear-gradient(135deg, #fd65c4 0%, #836cd3 55%, #3f72e5 100%);
+      box-shadow: 0 6px 20px rgba(131,108,211,0.35), 0 2px 6px rgba(253,101,196,0.2);
+      letter-spacing: -0.2px;
+    }
+
+    .btn-google::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.15), transparent);
+      pointer-events: none;
+    }
+
+    .btn-google:hover {
+      box-shadow: 0 10px 30px rgba(131,108,211,0.45), 0 2px 8px rgba(253,101,196,0.25);
+    }
+
+    .btn-shuffle {
+      width: 54px;
+      height: 54px;
+      flex-shrink: 0;
+      font-size: 20px;
+      background: linear-gradient(135deg, rgba(253,101,196,0.08), rgba(63,114,229,0.08));
+      border: 1.5px solid rgba(131,108,211,0.18);
+      color: #836cd3;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-shuffle:hover {
+      background: linear-gradient(135deg, rgba(253,101,196,0.15), rgba(63,114,229,0.12));
+      border-color: rgba(131,108,211,0.35);
+    }
+
+    /* Steps */
+    .steps {
+      display: flex;
+      gap: 6px;
+      margin-top: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: #9a9ab0;
+      font-weight: 500;
+    }
+
+    .step-num {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #fd65c4, #836cd3);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .step-arrow {
+      color: #d0c8e8;
+      font-size: 10px;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 11px;
+      color: #bbb8cc;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Toast */
+    .copied-toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: linear-gradient(135deg, #fd65c4, #836cd3);
+      color: #fff;
+      padding: 13px 24px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 700;
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease;
+      opacity: 0;
+      pointer-events: none;
+      white-space: nowrap;
+      box-shadow: 0 8px 28px rgba(131,108,211,0.35);
+      z-index: 999;
+    }
+
+    .copied-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="logo-icon">💻</div>
+    <div class="logo-title">X1 SmarTech</div>
+    <div class="logo-sub">Premium Refurbished Laptops · Bhilwara</div>
+  </div>
+
+  <div class="card">
+    <div class="tag">⭐ Share Your Experience</div>
+    <div class="headline">Loved your laptop?<br>Tell the world.</div>
+    <div class="sub">Tap a review, hit the button — done in 30 seconds.</div>
+
+    <div class="stars-row">
+      <div class="stars">⭐⭐⭐⭐⭐</div>
+      <div class="stars-label">5.0 Rating</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="review-box" id="reviewBox">
+      <div class="quote-mark">"</div>
+      <div class="review-text" id="reviewText">Loading...</div>
+    </div>
+
+    <div class="shuffle-hint">
+      <span>Don't like this one? Shuffle</span>
+      <span>👆</span>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-google" onclick="goGoogle()">Paste on Google ↗</button>
+      <button class="btn btn-shuffle" onclick="shuffle()" title="New review">🔀</button>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <span>Tap button</span>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <span>Paste review</span>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <span>Give 5 ⭐ & submit</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">Made with ❤️ by X1 SmarTech · Bhilwara, Rajasthan</div>
+
+  <div class="copied-toast" id="toast">✅ Copied! Paste it on Google & give 5 stars ⭐</div>
+
+  <script>
+    const GOOGLE_REVIEW_URL = "https://search.google.com/local/writereview?placeid=ChIJQ5ny93PDaDkRiz93HJLSrqs";
+
+    const reviews = [
+      // SHORT
+      "Best laptop shop in Bhilwara! Got a ThinkPad in perfect condition. Highly recommend X1 SmarTech.",
+      "Superb quality refurbished laptop. Feels brand new. Great deal at X1 SmarTech!",
+      "Trusted shop. Got exactly what was promised. Will buy again from X1 SmarTech.",
+      "Amazing service and quality product. My ThinkPad works perfectly. 5 stars!",
+      "Very happy with my purchase. X1 SmarTech delivered a premium laptop at a fair price.",
+      "Legit shop, genuine products. No regrets buying from X1 SmarTech.",
+      "Bought an HP EliteBook — mint condition. X1 SmarTech is the real deal.",
+      "Fast delivery, great condition laptop. X1 SmarTech knows their business.",
+      "Excellent refurbished laptop. Battery backup amazing. X1 SmarTech rocks!",
+      "No issues at all. Top quality machine. X1 SmarTech is trustworthy.",
+      "Bought a ThinkPad T470 — beast machine! Very happy with X1 SmarTech.",
+      "Premium product, honest pricing. X1 SmarTech is my go-to laptop shop.",
+      "Quality product, quick support. Love my new laptop from X1 SmarTech!",
+      "Refurbished but feels brand new. X1 SmarTech does a great job.",
+      "Great value for money. X1 SmarTech never disappoints. Highly recommended!",
+      "Smooth purchase experience. Got a perfect laptop. Thanks X1 SmarTech!",
+      "Professional seller, quality product. X1 SmarTech is 100% reliable.",
+      "Happy customer here! My laptop is running perfectly. Thanks X1 SmarTech.",
+      "Best refurbished laptop deal I found in Rajasthan. X1 SmarTech is the best.",
+      "Clean laptop, honest seller. X1 SmarTech is exactly what they claim to be.",
+
+      // MEDIUM
+      "I was skeptical about buying a refurbished laptop, but X1 SmarTech completely changed my mind. The ThinkPad I received looks and performs like brand new. Great experience overall.",
+      "Bought a business-class laptop from X1 SmarTech and I'm genuinely impressed. The build quality is excellent, battery holds up well, and the price was very reasonable compared to new laptops.",
+      "X1 SmarTech is a trustworthy shop in Bhilwara. I got an HP EliteBook and it was in perfect condition — no scratches, no keyboard issues, runs fast. Very happy with this purchase.",
+      "What surprised me most was how well-tested the laptop was. No hidden issues. X1 SmarTech clearly checks everything before selling. My Dell Latitude works flawlessly.",
+      "Really solid experience buying from X1 SmarTech. They were upfront about the specs and condition of the laptop, and it matched exactly what they described. Refreshingly honest sellers.",
+      "Referred by a friend and I'm glad I came to X1 SmarTech. Got a ThinkPad L480 at a great price. Works perfectly for my college work. Definitely recommending to others.",
+      "I needed a good laptop for my work from home setup and X1 SmarTech gave me the best options within my budget. The machine runs smooth, no complaints whatsoever.",
+      "Very professional experience. The shop in Bhilwara is neat, the owner explains everything clearly, and the product quality is top-notch. X1 SmarTech has earned a loyal customer.",
+      "Got a premium refurbished ThinkPad and could not be happier. Fast SSD, clean display, great battery — X1 SmarTech really delivers on their promise of business-class quality.",
+      "X1 SmarTech is doing something special — selling premium business laptops that most people couldn't afford new, at prices that make sense. Got an amazing machine. Highly recommend.",
+      "I was comparing a few shops online before visiting X1 SmarTech in person. The difference in quality was immediately obvious — these are actually premium machines, not just any old laptops.",
+      "The ThinkPad I bought from X1 SmarTech has been running for 6 months with zero issues. Best decision I made for my freelancing setup. Great product, great people.",
+      "Visited X1 SmarTech with a tight budget and walked out with a laptop that exceeded all my expectations. They helped me find exactly what I needed. Really appreciated the guidance.",
+      "Clean, fast, and reliable — that's my refurbished HP EliteBook from X1 SmarTech. Worth every rupee. If you need a quality laptop in Bhilwara, this is the place.",
+      "I was worried about after-sales support for a refurbished laptop, but X1 SmarTech was responsive and helpful whenever I had questions. Peace of mind matters and they deliver it.",
+      "Excellent shop. The owner personally tested the laptop in front of me before handover. That kind of transparency is rare. X1 SmarTech has definitely gained my trust.",
+      "My son needed a laptop for his BCA studies. X1 SmarTech suggested the perfect ThinkPad within our budget. Runs all his software smoothly. Very satisfied parents here!",
+      "Quality that punches way above the price. X1 SmarTech sells refurbished laptops that feel premium. Got an HP EliteBook and it's faster than many new laptops I've used.",
+      "From inquiry to delivery, everything was smooth with X1 SmarTech. The laptop was exactly as described. Clean, fast, and well-priced. Will definitely come back for my next upgrade.",
+      "I run a small business and needed reliable machines for my team. X1 SmarTech helped me get three quality ThinkPads at a fraction of the cost of new ones. Excellent value!",
+
+      // LONG
+      "I had been searching for a good refurbished laptop for months but kept finding either overpriced options or poor-quality ones. A colleague finally pointed me to X1 SmarTech in Bhilwara. I was hesitant at first — refurbished laptops have a bad reputation. But from the moment I walked in, I could see this was different. The owner was knowledgeable, patient, and completely transparent about the condition grades and specs. I ended up getting a ThinkPad T470s and it has been an absolute workhorse. Fast processor, crisp display, great battery life. Six months in and not a single issue. X1 SmarTech has completely changed my opinion about refurbished laptops.",
+      "When I decided to start freelancing, I knew I needed a reliable laptop but couldn't justify the cost of a brand new one. X1 SmarTech was recommended by a friend and I am so glad I listened. The selection of business-class laptops — ThinkPads, HP EliteBooks, Dell Latitudes — is impressive. They don't sell cheap consumer-grade stuff. I picked up an HP EliteBook 840 G5 and it handles everything I throw at it. Video editing, coding, multiple browser tabs — no slowdowns. The price I paid was less than half of what a comparable new laptop would cost. If you're a student, freelancer, or small business owner in Rajasthan, X1 SmarTech is the smartest buy you can make.",
+      "Bought my first refurbished laptop from X1 SmarTech after reading about them online. Honestly wasn't sure what to expect, but the experience exceeded every expectation I had. The laptop — a Lenovo ThinkPad — arrived in immaculate condition. No visible wear, keyboard feels great, screen is crisp, and the SSD makes it incredibly fast. What really stood out was the customer service. The owner answered all my questions patiently, explained what refurbished actually means (better than I understood before), and followed up after the purchase to make sure everything was fine. This is how a premium electronics business should be run. I've since recommended X1 SmarTech to three friends and all of them are equally happy with their purchases.",
+      "I teach at a coaching center and needed a laptop that could handle presentations, internet browsing, spreadsheets, and some light video work — all day, every day. New laptops with those specs were way out of my budget. X1 SmarTech had exactly what I needed: a business-class machine that's been refurbished to high standards. I got a Dell Latitude and it has handled everything perfectly for almost a year now. The battery lasts through my entire workday, the build quality is rock solid, and it's never given me a single problem. For anyone who needs a dependable machine but doesn't want to overspend, X1 SmarTech is the answer. Genuinely one of the best purchases I've made.",
+      "I was about to buy a new laptop from a big e-commerce site when a colleague told me about X1 SmarTech. I'm so glad I paused and visited them first. The ThinkPad I got is in incredible condition — honestly better than some 'new' laptops I've used. The build quality of a business-class machine is on a completely different level from consumer laptops. More durable, better keyboard, better display, better battery life. And I paid significantly less than a mid-range new laptop would have cost. X1 SmarTech opened my eyes to the world of premium refurbished business laptops. I'll never go back to buying cheap new consumer laptops again. Brilliant shop, brilliant products.",
+      "Five stars without any hesitation. X1 SmarTech in Bhilwara is one of those rare shops where you feel genuinely looked after rather than just sold to. I walked in knowing nothing about business laptops and walked out with a perfect machine for my needs, a clear understanding of what I bought, and complete confidence in my purchase. The HP EliteBook I got has been with me for almost a year — used daily for heavy work — and it hasn't missed a beat. Display is sharp, performance is fast, and the build quality makes my friend's ₹60,000 new laptop look flimsy in comparison. X1 SmarTech offers something rare: real premium quality at honest prices. This is the kind of business that deserves to grow.",
+      "My previous laptop died right before my semester exams and I needed a replacement urgently. A friend recommended X1 SmarTech and I'm so grateful he did. They had multiple options in my budget, helped me choose the right one for my needs, and I walked out with a ThinkPad the same day. The laptop worked perfectly from day one — fast boot, smooth performance, good battery. It got me through my exams and has been my daily driver ever since. The peace of mind of buying from a reputable shop like X1 SmarTech is priceless. These guys know what they're doing and they care about their customers. Cannot recommend them enough.",
+      "I run a small startup and we needed laptops for three new hires. Budget was tight but I didn't want to compromise on quality — productivity matters too much. X1 SmarTech was the perfect solution. They helped me pick three matching ThinkPads in excellent condition at a very competitive price. All three machines have been running smoothly for over six months with zero downtime. The owner even helped me set up basic configurations to speed up the handover to my team. That level of support is remarkable for any shop, let alone a refurbished laptop seller. If you're a business owner looking for reliable machines at smart prices, X1 SmarTech should be your first and last stop.",
+      "I was about to buy a new laptop from a big e-commerce site when a colleague told me about X1 SmarTech. I'm so glad I paused and visited them first. The ThinkPad I got is in incredible condition — honestly better than some 'new' laptops I've used. The build quality of a business-class machine is on a completely different level from consumer laptops. More durable, better keyboard, better display, better battery life. And I paid significantly less than a mid-range new laptop would have cost. X1 SmarTech opened my eyes to the world of premium refurbished business laptops. I'll never go back to buying cheap new consumer laptops again. Brilliant shop, brilliant products.",
+      "Five stars without any hesitation. X1 SmarTech in Bhilwara is one of those rare shops where you feel genuinely looked after rather than just sold to. I walked in knowing nothing about business laptops and walked out with a perfect machine for my needs, a clear understanding of what I bought, and complete confidence in my purchase. The HP EliteBook I got has been with me for almost a year — used daily for heavy work — and it hasn't missed a beat. Display is sharp, performance is fast, and the build quality makes my friend's ₹60,000 new laptop look flimsy in comparison. X1 SmarTech offers something rare: real premium quality at honest prices. This is the kind of business that deserves to grow.",
+      "Honestly, X1 SmarTech changed how I think about buying tech. I always assumed refurbished meant second-best. I was wrong. The ThinkPad I bought from them is a genuinely premium machine — built for corporate use, refurbished to a high standard, and sold by people who take pride in their work. The difference in build quality versus regular consumer laptops is immediately obvious when you hold it. Metal chassis, military-grade durability, excellent keyboard. For college students or working professionals in Bhilwara or surrounding areas, this is the smartest way to get a great laptop. Skip the cheap new options and invest in something that will last. X1 SmarTech makes that an easy, trustworthy choice.",
+      "What I appreciate most about X1 SmarTech is the consistency. I've heard from multiple friends who have all bought laptops there, and everyone has the same story — great product, honest dealing, excellent value. When I finally visited myself, I had the exact same experience. The owner helped me choose between two options based on my actual use case (not just trying to sell me the more expensive one), and I got the perfect machine for my needs. My HP EliteBook has been great — fast, reliable, professional-looking. It's a pleasure to use every day. X1 SmarTech has built a well-deserved reputation in Bhilwara and I'm happy to add my voice to the chorus of satisfied customers.",
+      "I've been recommending X1 SmarTech to everyone I know ever since I bought my ThinkPad from them. It's been nearly a year and the laptop performs just as well as it did on day one. No issues with the battery, keyboard, screen, or performance. I use it for graphic design work which is fairly demanding, and it handles everything without breaking a sweat. The price I paid was extremely fair for what I got — a premium business laptop that would cost three times as much new. The team at X1 SmarTech knows their products inside out and takes the time to match you with the right machine. That's rare. That's valuable. That's why they deserve every five-star review they get.",
+      "Shopping at X1 SmarTech felt like a completely different experience from buying at a regular electronics store. There was no pressure, no upselling, no confusion. Just honest advice and genuinely good products. The ThinkPad I bought was demonstrated thoroughly, all specs were explained clearly, and I was encouraged to test it myself before committing. It's been eight months and the laptop has been absolutely reliable — fast startup, good battery, solid performance for my MBA coursework. For students especially, X1 SmarTech offers incredible value. You get a premium machine for the price of a basic one, and you can actually trust the seller. I'd give six stars if I could.",
+      "My ThinkPad from X1 SmarTech is the best laptop I've ever owned — and I've owned quite a few over the years. The combination of a robust business chassis, fast SSD, crisp display, and great keyboard is something you simply don't find in consumer-grade laptops at this price. I've dropped it once (accidentally, on a hard floor) and there wasn't even a scratch. That's the kind of build quality you get from enterprise machines. X1 SmarTech sources these properly and refurbishes them to a high standard. The service was excellent too — responsive, knowledgeable, and no-nonsense. If you're anywhere in Rajasthan and need a quality laptop, make the trip to Bhilwara. It's worth it.",
+      "I bought my first laptop from X1 SmarTech for my BCA course and couldn't be more pleased. Coming from a family that had to save up for this, the value I got from X1 SmarTech was exactly what we needed. A ThinkPad in perfect condition for a price that didn't break the bank. The machine handles all my programming software, virtual machines, and college assignments without any lag. It's been six months and everything still works perfectly. The warranty and after-service support gave my parents peace of mind. I've told all my classmates about X1 SmarTech and a few of them have already bought laptops there. When I need an upgrade someday, I know exactly where I'm going.",
+      "As someone who has worked in IT for over a decade, I know quality hardware when I see it. X1 SmarTech sells genuinely premium refurbished business laptops — the kind that major corporations use and trust. I picked up a ThinkPad for personal use and it's outstanding. Properly cleaned, well-tested, everything working as it should. The owner clearly has deep knowledge of these machines and doesn't try to pass off poor units as good ones. Their stock is curated, not just bulk-purchased random units. That quality control is what sets X1 SmarTech apart. Anyone looking for a reliable laptop in the Bhilwara area should not look anywhere else. This is the benchmark for how refurbished laptops should be sold.",
+      "Visited X1 SmarTech on a friend's recommendation and left with an HP EliteBook that I absolutely love. What I wasn't expecting was how premium it would feel. Slim, light, solid keyboard, bright display — this is a professional machine in every sense. For the price I paid, I could not have gotten anything close to this quality anywhere else. The owner spent almost an hour with me explaining the differences between models, showing me specs side by side, and helping me make an informed decision. That kind of service is rare. He wasn't in a hurry to close the sale — he wanted me to be confident in my choice. That attitude builds real trust. X1 SmarTech has a customer for life in me.",
+      "I manage purchases for a small NGO and we needed quality laptops for our field staff without overspending. X1 SmarTech was the perfect partner. They helped us choose robust ThinkPads that can handle field conditions, configured them to our requirements, and gave us an excellent price for buying multiple units. All five laptops have been running without issues for seven months. The after-sales support has been responsive whenever we've had questions. For organizations with limited budgets who can't compromise on quality and reliability, X1 SmarTech is the ideal solution. I'll be coming back for our next round of purchases without a second thought.",
+      "X1 SmarTech is proof that you don't need to spend a fortune to get a great laptop. My refurbished ThinkPad from their shop outperforms friends' brand-new consumer laptops in almost every way — build quality, keyboard, battery life, and raw performance. Business-class machines are just built differently, and X1 SmarTech understands this better than anyone in the region. The owner is passionate, knowledgeable, and genuinely helpful. He matched me with the right laptop for my specific needs and the experience has been flawless ever since. For anyone sitting on the fence about buying refurbished — don't hesitate if it's from X1 SmarTech. They've earned the trust.",
+
+      // More SHORT
+      "Great shop! Got a solid ThinkPad at a brilliant price. X1 SmarTech is highly recommended.",
+      "Perfectly refurbished laptop. Runs like new. X1 SmarTech is the best in Bhilwara.",
+      "5-star service and 5-star product. X1 SmarTech delivers on every promise.",
+      "Zero complaints. Great machine, great deal. Love my laptop from X1 SmarTech.",
+      "Got a premium ThinkPad at a student-friendly price. X1 SmarTech is a gem!",
+      "Reliable shop, reliable product. X1 SmarTech is my first recommendation for anyone buying a laptop.",
+      "Very satisfied customer. The laptop is perfect. X1 SmarTech exceeded my expectations.",
+      "Bought for my office work — runs perfectly all day. X1 SmarTech knows quality.",
+      "Honest pricing, great quality. X1 SmarTech is the real deal in Bhilwara.",
+      "No gimmicks, no hidden issues. Just a great laptop. X1 SmarTech is trustworthy.",
+
+      // More MEDIUM
+      "My ThinkPad from X1 SmarTech has been my daily work machine for almost a year. Not a single hiccup. Fast, reliable, and the battery still holds up great. This is what quality looks like.",
+      "Was gifted a laptop from X1 SmarTech by my parents for my college admission. It's been a fantastic machine — handles all my coursework, a bit of gaming, and even video editing. Super happy!",
+      "The staff at X1 SmarTech really know their products. They answered every question I had, didn't oversell me, and made sure I got the right laptop for my budget. Excellent buying experience.",
+      "I was comparing X1 SmarTech with online options and in-person quality check won easily. The laptop I got is immaculate — you'd never guess it's refurbished. Absolutely worth it.",
+      "Three of us from the same office bought laptops from X1 SmarTech. All three are working perfectly six months later. Consistent quality is hard to find — X1 SmarTech nails it.",
+      "X1 SmarTech offers something rare — business-grade hardware at everyday prices. My HP EliteBook is faster and more durable than much more expensive new laptops I've tried.",
+      "Bought for my dad who needed something reliable for his home office. X1 SmarTech suggested the perfect model, and he's been using it happily for months. Easy experience from start to finish.",
+      "Love how transparent X1 SmarTech is about product condition. No surprises after purchase — the laptop was exactly as described. That kind of honesty builds real trust.",
+      "The laptop from X1 SmarTech has been my travel companion for months. Lightweight, durable, great battery. It's handled everything from client calls to airport lounges. Zero issues.",
+      "X1 SmarTech gave me exactly what I needed: a powerful business laptop at a price that made sense for a student. My ThinkPad breezes through everything I need for my studies.",
+      "Bought from X1 SmarTech after seeing them recommended in a local Facebook group. The reviews were right — exceptional product quality and honest service. My laptop is perfect.",
+      "Not my first purchase from X1 SmarTech — I bought my second laptop from them too! Consistent quality, great pricing, and a seller you can actually trust. That's why I keep coming back.",
+      "I run a YouTube channel and needed a laptop for editing. X1 SmarTech helped me find a powerful ThinkPad within my budget. It handles 4K editing without breaking a sweat. Incredible value.",
+      "X1 SmarTech is the kind of shop that gives you confidence in your purchase. Tested everything in front of me, answered all my questions, and the product has been flawless. 5 stars.",
+      "My entire family uses laptops from X1 SmarTech now. We've bought three over two years and all are going strong. This is our go-to shop for every tech need. Cannot recommend more highly.",
+      "For anyone hesitating about refurbished laptops — visit X1 SmarTech once. See the quality yourself. You'll never look at brand-new consumer laptops the same way again.",
+      "The ThinkPad keyboard alone is worth the visit to X1 SmarTech. Best typing experience I've ever had on any laptop, and the rest of the machine lives up to that standard completely.",
+      "Got a great deal on an HP EliteBook at X1 SmarTech. Fast, clean, professional-looking. My clients always comment on how sleek my laptop looks during meetings. Great choice!",
+      "Very impressed by the after-purchase support at X1 SmarTech. Had a minor software query and they helped me resolve it quickly. Excellent all-around service.",
+      "X1 SmarTech is making premium computing accessible in Rajasthan. What they do matters — and they do it really well. My laptop purchase was smooth and the machine is excellent.",
+
+      // Final batch
+      "Best refurbished laptop in Bhilwara. X1 SmarTech is where quality meets affordability.",
+      "Excellent shop! Great products, transparent pricing. X1 SmarTech is the best decision I made.",
+      "My ThinkPad from X1 SmarTech is a beast. Love it. Will buy again!",
+      "Quality is unmatched. X1 SmarTech delivers premium laptops at honest prices. 10/10.",
+      "Happy customer. Great laptop. X1 SmarTech is absolutely recommended.",
+      "The laptop from X1 SmarTech has been perfect for my freelancing work. Couldn't ask for more.",
+      "Super reliable machine. Super helpful shop. X1 SmarTech wins on both counts.",
+      "Got exactly what was promised. X1 SmarTech is an honest, quality-first business.",
+      "Best purchase I've made in a long time. My ThinkPad from X1 SmarTech is incredible.",
+      "Impressed with the quality and service. X1 SmarTech is doing great work in Bhilwara.",
+      "My HP EliteBook from X1 SmarTech handles everything perfectly. Business-class quality at a smart price — exactly what I needed for my remote work setup.",
+      "X1 SmarTech helped me choose a laptop based on my actual usage needs, not just the price. That genuine advice made all the difference. Excellent product and service.",
+      "I was looking for a durable laptop for daily use. X1 SmarTech recommended a ThinkPad — and it's been drop-proof, scratch-resistant, and fast for over eight months.",
+      "Purchased a laptop for my daughter's college. X1 SmarTech gave us the best quality within budget. She's been using it daily with no issues. Wonderful experience.",
+      "X1 SmarTech stands behind their products. That confidence says everything. My refurbished laptop has been absolutely reliable and I have no hesitation recommending them.",
+      "The moment I unboxed my laptop from X1 SmarTech, I knew I'd made a great decision. Clean, fast, premium feel — everything a business laptop should be.",
+      "A friend swore by X1 SmarTech and now I understand why. The ThinkPad I got is seriously impressive. Great seller, great product, great experience.",
+      "X1 SmarTech is in a different league from regular second-hand shops. Professional, transparent, and selling genuinely quality machines. My laptop proves it every day.",
+      "Solid keyboard, fast SSD, beautiful display — my HP EliteBook from X1 SmarTech checks every box. Excellent value and a trustworthy seller.",
+      "I've recommended X1 SmarTech to at least five people. All of them came back grateful. When a shop consistently delivers this well, word spreads — and rightly so.",
+      "The whole buying experience at X1 SmarTech was smooth and transparent. Got a great ThinkPad, fair price, and peace of mind. That combination is rare. Highly recommended.",
+      "I needed a laptop upgrade on a tight budget. X1 SmarTech delivered something far beyond what I expected. The machine is premium quality and the service was outstanding.",
+      "Six months with my ThinkPad from X1 SmarTech and it still feels new. Fast, clean, and reliable every single day. This is what great refurbishment looks like.",
+      "X1 SmarTech gets refurbished laptops right. Professional, quality products. My purchase has been completely satisfying and I'll absolutely shop there again.",
+      "Best laptop shopping experience in Bhilwara. X1 SmarTech is honest, helpful, and sells really great machines. Couldn't ask for more from a laptop shop.",
+      "Genuinely surprised by the quality. X1 SmarTech's ThinkPad feels like a luxury product at a budget price. Incredible value. Will be recommending to everyone.",
+      "My Dell Latitude from X1 SmarTech has been rock solid for work. Fast, reliable, great battery. This is exactly the kind of machine a professional needs.",
+      "X1 SmarTech turned me into a believer in refurbished laptops. The quality is real, the pricing is fair, and the service is excellent. Cannot recommend more highly.",
+      "Excellent refurbished laptop — fast SSD, crisp screen, perfect keyboard. X1 SmarTech sells properly premium machines. My purchase has been absolutely worth it.",
+      "If you need a great laptop without overspending, X1 SmarTech is the only answer in Bhilwara. Quality, trust, and value all in one shop.",
+      "The ThinkPad from X1 SmarTech has handled a year of heavy daily use without a single problem. Durable, fast, and great battery. Outstanding product and service.",
+      "X1 SmarTech makes buying a refurbished laptop feel premium and trustworthy. Great selection, honest team, and genuinely excellent products. Five stars every time."
+    ];
+
+    let currentIndex = -1;
+
+    function getRandomIndex() {
+      let idx;
+      do { idx = Math.floor(Math.random() * reviews.length); }
+      while (idx === currentIndex && reviews.length > 1);
+      return idx;
+    }
+
+    function loadReview() {
+      currentIndex = getRandomIndex();
+      document.getElementById('reviewText').textContent = reviews[currentIndex];
+      document.getElementById('reviewBox').classList.remove('copied');
+    }
+
+    function shuffle() {
+      loadReview();
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2800);
+    }
+
+    function goGoogle() {
+      const text = reviews[currentIndex];
+
+      // Copy first — page still has focus so execCommand works on all browsers
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.top = '0';
+      ta.style.left = '0';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      ta.setSelectionRange(0, 99999);
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+
+      document.getElementById('reviewBox').classList.add('copied');
+      showToast('✅ Copied! Paste it on Google & give 5 stars ⭐');
+
+      // Open Google immediately after — still inside tap gesture so never blocked
+      window.open(GOOGLE_REVIEW_URL, '_blank');
+    }
+
+    loadReview();
+  </script>
+</body>
+</html>
